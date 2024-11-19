@@ -1,0 +1,9 @@
+{
+  "id": "RLP",
+  "name": "RLP",
+  "author": "Ariane Schoenwiesner",
+  "version": "1.0.7",
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://www.rapidliquidprint.co/",
+  "dwcVersion": "auto"
+}

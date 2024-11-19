@@ -1,12 +1,12 @@
 <template>
 	<v-card>
 		<v-card-title class="pb-1">
-			<v-icon small class="mr-1">mdi-dots-horizontal</v-icon> {{ $t('panel.jobData.caption') }}
+			<v-icon small class="mr-1">mdi-dots-horizontal</v-icon>
 		</v-card-title>
 
 		<v-card-text class="text-center pb-2">
 			<v-row dense>
-				<v-col class="d-flex flex-column">
+				<!--v-col class="d-flex flex-column">
 					<strong>
 						{{ $t('panel.jobData.warmUpDuration') }}
 					</strong>
@@ -31,7 +31,7 @@
 					<span>
 						{{ $displayTime(job.layers.length ? job.layers[job.layers.length - 1].duration : null) }}
 					</span>
-				</v-col>
+				</v-col-->
 
 				<v-col class="d-flex flex-column">
 					<strong>

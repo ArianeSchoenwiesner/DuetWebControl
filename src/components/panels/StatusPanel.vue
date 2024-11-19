@@ -37,7 +37,7 @@ a:not(:hover) {
 
 			<v-spacer></v-spacer>
 
-			<span v-if="machineMode">{{ $t('panel.status.mode', [machineMode.toUpperCase()]) }}</span>
+			<!--span v-if="machineMode">{{ $t('panel.status.mode', [machineMode.toUpperCase()]) }}</span-->
 		</v-card-title>
 
 		<v-card-text class="px-0 pt-0 pb-2 content text-xs-center" v-show="sensorsPresent || (visibleAxes.length + move.extruders.length)">
@@ -45,9 +45,7 @@ a:not(:hover) {
 			<template v-if="visibleAxes.length">
 				<v-row no-gutters class="flex-nowrap">
 					<v-col tag="strong" class="category-header">
-						<a href="javascript:void(0)" @click="displayToolPosition = !displayToolPosition">
-							{{ $t(displayToolPosition ? 'panel.status.toolPosition' : 'panel.status.machinePosition') }}
-						</a>
+						Position
 					</v-col>
 
 					<v-col>
@@ -71,22 +69,31 @@ a:not(:hover) {
 
 				<v-row align-content="center" no-gutters class="flex-nowrap">
 					<v-col tag="strong" class="category-header">
-						{{ $t('panel.status.extruders') }}
+						Volume (mL)
 					</v-col>
 
 					<v-col>
 						<v-row align-content="center" no-gutters>
-							<v-col v-for="(extruder, index) in move.extruders" :key="index" class="d-flex flex-column align-center">
+							<!--v-col v-for="(extruder, index) in move.extruders.slice(0,2)" :key="index" class="d-flex flex-column align-center">
 								<strong>
-									{{ $t('panel.status.extruderDrive', [index]) }}
-									<v-icon v-if="isFilamentSensorPresent(index)" small>
-										{{ sensors.filamentSensors[index].filamentPresent ? 'mdi-check' : 'mdi-window-close' }}
-									</v-icon>
+									{{ $t(["A","B"][index]) }}
 								</strong>
 								<span>
-									{{ $display(extruder.position, 1) }}
+									{{ $display(move.extruders[index].position*0.05, 3) }}
+								</span-->
+							<v-col v-for="(extruder, index) in move.extruders" :key="index" class="d-flex flex-column align-center">
+								<strong>
+									<div>
+									{{ $t(["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"][index]) }}
+									</div>
+								</strong>
+								<span>
+									<div>
+										{{ $display(move.extruders[index].position*0.05, 0) }}
+									</div>
 								</span>
 							</v-col>
+							<!--/v-col-->
 						</v-row>
 					</v-col>
 				</v-row>
@@ -105,7 +112,7 @@ a:not(:hover) {
 						<v-row align-content="center" no-gutters>
 					<v-col v-if="isNumber(move.currentMove.requestedSpeed)" class="d-flex flex-column align-center">
 						<strong>
-							{{ $t('panel.status.requestedSpeed') }}
+							Max Speed
 						</strong>
 						<span>
 							{{ displaySpeed(move.currentMove.requestedSpeed) }}
@@ -114,7 +121,7 @@ a:not(:hover) {
 
 					<v-col v-if="isNumber(move.currentMove.topSpeed)" class="d-flex flex-column align-center">
 						<strong>
-							{{ $t('panel.status.topSpeed') }}
+							Speed
 						</strong>
 						<span>
 							{{ displaySpeed(move.currentMove.topSpeed) }}
@@ -126,7 +133,7 @@ a:not(:hover) {
 			</template>
 
 			<!-- Sensors -->
-			<template v-if="sensorsPresent">
+			<!--template v-if="sensorsPresent">
 				<v-divider v-show="move.axes.length || move.extruders.length || isNumber(move.currentMove.requestedSpeed) || isNumber(move.currentMove.topSpeed)" class="my-2"></v-divider>
 
 				<v-row align-content="center" no-gutters class="flex-nowrap">
@@ -211,7 +218,7 @@ a:not(:hover) {
 						</v-row>
 					</v-col>
 				</v-row>
-			</template>
+			</template-->
 		</v-card-text>
 
 		<v-card-text class="pa-0" v-show="!sensorsPresent && !(move.axes.length + move.extruders.length)">
@@ -220,6 +227,7 @@ a:not(:hover) {
 			</v-alert>
 		</v-card-text>
 	</v-card>
+
 </template>
 
 <script>

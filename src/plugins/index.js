@@ -64,14 +64,14 @@ export function injectComponent(name, component) {
 	store.commit('uiInjection/injectComponent', { name, component });
 }
 
-export default [
+export default [ /*
 	new DwcPlugin({
 		id: 'Accelerometer',
 		name: 'Accelerometer',
 		author: 'Duet3D Ltd',
 		version,
 		loadDwcResources: () => import(
-			/* webpackChunkName: "Accelerometer" */
+			/* webpackChunkName: "Accelerometer" *//*
 			'./Accelerometer/index.js'
 		)
 	}),
@@ -80,8 +80,8 @@ export default [
 		name: 'Height Map',
 		author: 'Duet3D Ltd',
 		version,
-		loadDwcResources: () => import(
-			/* webpackChunkName: "HeightMap" */
+		loadDwcResources: () => import(*/
+			/* webpackChunkName: "HeightMap" *//*
 			'./HeightMap/index.js'
 		)
 	}),
@@ -90,11 +90,11 @@ export default [
 		name: 'G-Code Viewer',
 		author: 'Juan Rosario',
 		version,
-		loadDwcResources: () => import(
-			/* webpackChunkName: "GCodeViewer" */
+		loadDwcResources: () => import(*/
+			/* webpackChunkName: "GCodeViewer" *//*
 			'./GCodeViewer/index.js'
 		)
-	}),
+	}),*/
 	new DwcPlugin({
 		id: 'ObjectModelBrowser',
 		name: 'Object Model Browser',
@@ -104,17 +104,27 @@ export default [
 			/* webpackChunkName: "ObjectModelBrowser" */
 			'./ObjectModelBrowser/index.js'
 		)
-	}),
+	}),/*
 	new DwcPlugin({
 		id: 'OnScreenKeyboard',
 		name: 'On-Screen Keyboard',
 		author: 'Duet3D Ltd',
 		version,
-		loadDwcResources: () => import(
-			/* webpackChunkName: "OnScreenKeyboard" */
+		loadDwcResources: () => import(*/
+			/* webpackChunkName: "OnScreenKeyboard" *//*
 			'./OnScreenKeyboard/index.js'
 		)
-	}),
+	}),*/
 	// #DWC_PLUGIN# <- this marker is used by the plugin build script, leave it here
 	// Add your own plugins here during development...
+	new DwcPlugin({
+		id: 'RLP',
+		name: 'RLP',
+		author: 'Ariane Schoenwiesner',
+		version: '1.0.7',
+		loadDwcResources: () => import(
+			/* webpackChunkName: "RLP" */
+			'./RLP/index.js'
+		)
+	}),
 ]

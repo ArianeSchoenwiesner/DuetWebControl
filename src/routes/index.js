@@ -3,20 +3,21 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-import Status from './Control/Status.vue'
-import Dashboard from './Control/Dashboard.vue'
-import Console from './Control/Console.vue'
+//import Status from './Control/Status.vue'
+//import Dashboard from './Control/Dashboard.vue'
+//import Console from './Control/Console.vue'
+import RLP from '../plugins/RLP/RLP.vue'
 
-import Filaments from './Files/Filaments.vue'
+//import Filaments from './Files/Filaments.vue'
 import Jobs from './Files/Jobs.vue'
-import Macros from './Files/Macros.vue'
-import System from './Files/System.vue'
+//import Macros from './Files/Macros.vue'
+//import System from './Files/System.vue'
 
 import JobStatus from './Job/Status.vue'
-import Webcam from './Job/Webcam.vue'
+//import Webcam from './Job/Webcam.vue'
 
-import General from './Settings/General.vue'
-import Machine from './Settings/Machine.vue'
+//import General from './Settings/General.vue'
+//import Machine from './Settings/Machine.vue'
 import Plugins from './Settings/Plugins.vue'
 
 import Page404 from './Page404.vue'
@@ -180,23 +181,23 @@ export function registerSettingTab(general, name, component, caption, translated
 }
 
 // Control
-Vue.use(Status)
-Vue.use(Dashboard)
-Vue.use(Console)
+//Vue.use(Status)
+//Vue.use(Console)
+Vue.use(RLP)
 
 // Files
-Vue.use(Filaments)
+//Vue.use(Filaments)
 Vue.use(Jobs)
-Vue.use(Macros)
-Vue.use(System)
+//Vue.use(Macros)
+//Vue.use(System)
 
 // Job
 Vue.use(JobStatus)
-Vue.use(Webcam)
+//Vue.use(Webcam)
 
 // Settings
-Vue.use(General)
-Vue.use(Machine)
+//Vue.use(General)
+//Vue.use(Machine)
 Vue.use(Plugins)
 
 // 404 page

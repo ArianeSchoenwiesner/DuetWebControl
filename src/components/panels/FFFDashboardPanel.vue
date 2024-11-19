@@ -8,12 +8,12 @@
 					<extrude-panel></extrude-panel>
 				</v-col>
 
-				<v-col v-if="atxPower !== null" md="3" lg="3" xl="2" align-self="center">
+				<!--v-col v-if="atxPower !== null" md="3" lg="3" xl="2" align-self="center">
 					<atx-panel></atx-panel>
-				</v-col>
+				</v-col-->
 			</v-row>
 
-			<v-row>
+			<!--v-row>
 				<v-col sm="12" :md="showATXPanel ? 9 : 12" :lg="showATXPanel ? 9 : 12" :xl="showATXPanel ? 10 : 12">
 					<fan-panel></fan-panel>
 				</v-col>
@@ -21,7 +21,7 @@
 				<v-col v-if="showATXPanel" md="3" lg="3" xl="2" align-self="center">
 					<atx-panel></atx-panel>
 				</v-col>
-			</v-row>
+			</v-row-->
 		</v-col>
 
 		<v-col class="hidden-xs-only" sm="4" md="4" lg="3" xl="3">

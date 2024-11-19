@@ -1,30 +1,36 @@
 <template>
 	<v-card>
-		<v-card-title class="pb-1">
-			<v-icon small class="mr-1">mdi-clock</v-icon> {{ $t('panel.jobEstimations.caption') }}
-		</v-card-title>
+		<!--v-card-title class="pb-1">
+			<v-icon small class="mr-1">mdi-clock</v-icon>
+		</v-card-title-->
 
 		<v-card-text class="text-center pb-2">
 			<v-row dense>
-				<v-col class="d-flex flex-column">
+				<!--v-col class="d-flex flex-column">
 					<strong>
 						{{ $t('panel.jobEstimations.filament') }}
 					</strong>
 					<span>
 						{{ $displayTime(job.timesLeft.filament) }}
 					</span>
-				</v-col>
+				</v-col-->
 
 				<v-col class="d-flex flex-column">
 					<strong>
-						{{ $t('panel.jobEstimations.file') }}
+						Estimated Finish
 					</strong>
 					<span>
 						{{ $displayTime(job.timesLeft.file) }}
 					</span>
+					<strong>
+						Job Time
+					</strong>
+					<span>
+						{{ $displayTime(jobDuration) }}
+					</span>
 				</v-col>
 
-				<v-col v-if="job.timesLeft.layer !== null" class="d-flex flex-column">
+				<!--v-col v-if="job.timesLeft.layer !== null" class="d-flex flex-column">
 					<strong>
 						{{ $t('panel.jobEstimations.layer') }}
 					</strong>
@@ -40,7 +46,7 @@
 					<span>
 						{{ $displayTime(slicerTimeLeft) }}
 					</span>
-				</v-col>
+				</v-col-->
 
 				<v-col v-if="job.file.simulatedTime && !isSimulating" class="d-flex flex-column">
 					<strong>
@@ -79,6 +85,9 @@ export default {
 				return this.isPrinting ? Math.max(0, this.job.file.printTime - this.job.duration) : this.job.file.printTime;
 			}
 			return null;
+		},
+		jobDuration() {
+			return isPrinting(this.status) ? this.job.duration : this.job.lastDuration;
 		}
 	},
 	data() {
