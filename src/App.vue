@@ -165,6 +165,7 @@ export default {
 			boards: state => state.machine.model.boards,
 			menuDirectory: state => state.machine.model.directories.menu,
 			name: state => state.machine.model.network.name,
+			ip: state => state.network.interfaces[0].actualIP,	// problem here, can't figure out what "interfaces" value is
 			status: state => state.machine.model.state.status,
 
 			darkTheme: state => state.settings.darkTheme,

@@ -62,8 +62,8 @@
 								<v-row v-for="(extruder, index) in move.extruders" :key="index" class="mx-4">
 									<div v-if="index > 1">
 										<v-row>
-											<input type="checkbox" label='[Cl,Dl,El,Fl,Gl,Hl,Il,Jl,Kl,Ll,Ml,Nl,Ol,Pl,Ql,Rl,Sl,Tl,Ul,Vl,Wl][index-2]' v-model='adds[index-2][1]' @change="refreshAdd($event, index-2)">
-											<label for="[Cl,Dl,El,Fl,Gl,Hl,Il,Jl,Kl,Ll,Ml,Nl,Ol,Pl,Ql,Rl,Sl,Tl,Ul,Vl,Wl][index-2]" class="text-center mx-2">
+											<input type="checkbox" label='[A2,B2,El,Fl,Gl,Hl,Il,Jl,Kl,Ll,Ml,Nl,Ol,Pl,Ql,Rl,Sl,Tl,Ul,Vl,Wl][index-2]' v-model='adds[index-2][1]' @change="refreshAdd($event, index-2)">
+											<label for="[A2,B2,El,Fl,Gl,Hl,Il,Jl,Kl,Ll,Ml,Nl,Ol,Pl,Ql,Rl,Sl,Tl,Ul,Vl,Wl][index-2]" class="text-center mx-2">
 												{{ $t(adds[index-2][0]) }}
 											</label>
 										</v-row>
@@ -130,9 +130,9 @@
 										Refresh Purge
 									</v-btn>
 									<br>
-									<v-btn color="teal" @click="printString" block>
+									<!--v-btn color="teal" @click="printString" block>
 										Print Extrusion String
-									</v-btn>
+									</v-btn-->
 								</div>
 							</div>
 							<br>
@@ -156,20 +156,31 @@
 								</v-btn>
 							</div>
 							<br>
+							<div v-if="!idlePurging">
+								<v-btn color="green darken-4" @click='sneezePurge("AB")' block>
+									Sneeze
+								</v-btn>
+							</div>
+							<br>
 							<div v-if="air==0">
-								<v-btn color="green darken-4" @click="sendCode('M42 P3 S1')" block>
+								<v-btn color="#00838F" @click="sendCode('M106 P0 S1')" block>
 									Turn Air On
 								</v-btn>
 							</div>
 							<div v-if="air==1">
-								<v-btn color="red darken-3" @click="sendCode('M42 P3 S0')" block>
+								<v-btn color="red darken-3" @click="sendCode('M106 P0 S0')" block>
 									Turn Air Off
 								</v-btn>
 							</div>
 							<br>
-							<div v-if="!idlePurging">
-								<v-btn color="green darken-4" @click='sneezePurge("AB")' block>
-									Sneeze
+							<div v-if="light==0">
+								<v-btn color="#00838F" @click="sendCode('M106 P4 S1')" block>
+									Turn Light On
+								</v-btn>
+							</div>
+							<div v-if="light==1">
+								<v-btn color="red darken-3" @click="sendCode('M106 P4 S0')" block>
+									Turn Light Off
 								</v-btn>
 							</div>
 							<!--div>
@@ -383,7 +394,8 @@ export default {
 			axes: (state) => state.move.axes,
 			global: (state) => state.global,
 			status: (state) => state.state.status,
-			air: (state) => state.state.gpOut[3].pwm,
+			air: (state) => state.fans[0].actualValue,
+			light: (state) => state.fans[4].actualValue,
 			kinematicsName: (state) => state.move.kinematics.name,
 		}),
 		...mapState('settings', ['language']),
