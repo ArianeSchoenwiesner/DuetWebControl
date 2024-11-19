@@ -117,14 +117,14 @@ export default [ /*
 	}),*/
 	// #DWC_PLUGIN# <- this marker is used by the plugin build script, leave it here
 	// Add your own plugins here during development...
-	new DwcPlugin({
+	/*new DwcPlugin({
 		id: 'RLP',
 		name: 'RLP',
 		author: 'Ariane Schoenwiesner',
-		version: '1.0.7',
+		version: '1.0.8',
 		loadDwcResources: () => import(
-			/* webpackChunkName: "RLP" */
+			/* webpackChunkName: "RLP" 
 			'./RLP/index.js'
 		)
-	}),
+	}),*/
 ]
