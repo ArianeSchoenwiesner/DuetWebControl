@@ -163,23 +163,23 @@
 							</div>
 							<br>
 							<div v-if="air==0">
-								<v-btn color="#00838F" @click="sendCode('M106 P0 S1')" block>
+								<v-btn color="#00838F" @click="airPressure" block>
 									Turn Air On
 								</v-btn>
 							</div>
 							<div v-if="air==1">
-								<v-btn color="red darken-3" @click="sendCode('M106 P0 S0')" block>
+								<v-btn color="red darken-3" @click="airPressure" block>
 									Turn Air Off
 								</v-btn>
 							</div>
 							<br>
 							<div v-if="light==0">
-								<v-btn color="#00838F" @click="sendCode('M106 P4 S1')" block>
+								<v-btn color="#00838F" @click="lightSwitch" block>
 									Turn Light On
 								</v-btn>
 							</div>
 							<div v-if="light==1">
-								<v-btn color="red darken-3" @click="sendCode('M106 P4 S0')" block>
+								<v-btn color="red darken-3" @click="lightSwitch" block>
 									Turn Light Off
 								</v-btn>
 							</div>
@@ -268,6 +268,16 @@
 								</v-icon>
 								Jogging
 							</v-card-title>
+							<v-row class="justify-left px-10">
+								<v-btn color="green" @click="setupLoc" :disabled='global["purge_loc"]'>
+									Purge Location
+								</v-btn>
+								<v-btn class="mx-2" color="green" @click="goOrigin">
+									Origin
+								</v-btn>
+							</v-row>
+							<br>
+							<br>
 							<v-row class="text-center mx-8">
 								<v-text-field type="number" id="xx" label="X:" :placeholder=String(axes[0].machinePosition) persistent-placeholder v-model="xInp"></v-text-field>
 							</v-row>
@@ -287,13 +297,6 @@
 							<v-row class="justify-left px-10">
 								<v-btn color="green" @click="zGoTo">
 									Go
-								</v-btn>
-							</v-row>
-							<br>
-							<br>
-							<v-row class="justify-left px-10">
-								<v-btn color="green" @click="setupLoc">
-									Go to Setup Location
 								</v-btn>
 							</v-row>
 							<br>
@@ -413,8 +416,8 @@ export default {
 			// RLP data
 			needle: 0.5,
 			ratio: undefined,
-			ratios: [["A",false,1,0.5],["B",false,1,0.5],["C",false,0,0],["D",false,0,0],["E",false,0,0],["F",false,0,0],["G",false,0,0],["H",false,0,0],["I",false,0,0],["J",false,0,0],["K",false,0,0],["L",false,0,0],["M",false,0,0],["N",false,0,0],["O",false,0,0],["P",false,0,0],["Q",false,0,0],["R",false,0,0],["S",false,0,0],["T",false,0,0],["U",false,0,0],["V",false,0,0],["W",false,0,0]],
-			adds: [["C",false,0],["D",false,0],["E",false,0],["F",false,0],["G",false,0],["H",false,0],["I",false,0],["J",false,0],["K",false,0],["L",false,0],["M",false,0],["N",false,0],["O",false,0],["P",false,0],["Q",false,0],["R",false,0],["S",false,0],["T",false,0],["U",false,0],["V",false,0],["W",false,0]],
+			ratios: [["A1",false,1,0.5],["B1",false,1,0.5],["A2",false,0,0],["B2",false,0,0],["C",false,0],["D",false,0],["E",false,0,0],["F",false,0,0],["G",false,0,0],["H",false,0,0],["I",false,0,0],["J",false,0,0],["K",false,0,0],["L",false,0,0],["M",false,0,0],["N",false,0,0],["O",false,0,0],["P",false,0,0],["Q",false,0,0],["R",false,0,0],["S",false,0,0],["T",false,0,0],["U",false,0,0],["V",false,0,0],["W",false,0,0]],
+			adds: [["A2",false,0],["B2",false,0],["C",false,0],["D",false,0],["E",false,0],["F",false,0],["G",false,0],["H",false,0],["I",false,0],["J",false,0],["K",false,0],["L",false,0],["M",false,0],["N",false,0],["O",false,0],["P",false,0],["Q",false,0],["R",false,0],["S",false,0],["T",false,0],["U",false,0],["V",false,0],["W",false,0]],
 			totAdditive: 0,
 			ratioString: undefined,
 			idlePurging: false,
@@ -732,47 +735,52 @@ export default {
 			}
 		},*/
 		async homing(axis) {
-			if (axis == "all") {
-				this.codeReply = this.sendCode('M98 P"homeall.g"');
-				setTimeout(() => {
-					var homed = document.getElementById("homedCard");
-					if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
-						return;
-					}
-					homed.style.display = "none";
-				}, 400);
+			if ((this.global["mode"] == 2) || (this.global["mode"] == 0)) {
+				if (axis == "all") {
+					this.codeReply = this.sendCode('M98 P"homeall.g"');
+					setTimeout(() => {
+						var homed = document.getElementById("homedCard");
+						if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
+							return;
+						}
+						homed.style.display = "none";
+					}, 400);
+				}
+				else if (axis == "x") {
+					await this.sendCode('M98 p"homez.g"');
+					this.codeReply = this.sendCode('M98 P"homex.g"');
+					setTimeout(() => {
+						var homed = document.getElementById("homedCard");
+						if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
+							return;
+						}
+						homed.style.display = "none";
+					}, 400);
+				}
+				else if (axis == "y") {
+					await this.sendCode('M98 p"homez.g"');
+					this.codeReply = this.sendCode('M98 P"homey.g"');
+					setTimeout(() => {
+						var homed = document.getElementById("homedCard");
+						if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
+							return;
+						}
+						homed.style.display = "none";
+					}, 400);
+				}
+				else if (axis == "z") {
+					this.codeReply = this.sendCode('M98 P"homez.g"');
+					setTimeout(() => {
+						var homed = document.getElementById("homedCard");
+						if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
+							return;
+						}
+						homed.style.display = "none";
+					}, 400);
+				}
 			}
-			else if (axis == "x") {
-				await this.sendCode('M98 p"homez.g"');
-				this.codeReply = this.sendCode('M98 P"homex.g"');
-				setTimeout(() => {
-					var homed = document.getElementById("homedCard");
-					if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
-						return;
-					}
-					homed.style.display = "none";
-				}, 400);
-			}
-			else if (axis == "y") {
-				await this.sendCode('M98 p"homez.g"');
-				this.codeReply = this.sendCode('M98 P"homey.g"');
-				setTimeout(() => {
-					var homed = document.getElementById("homedCard");
-					if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
-						return;
-					}
-					homed.style.display = "none";
-				}, 400);
-			}
-			else if (axis == "z") {
-				this.codeReply = this.sendCode('M98 P"homez.g"');
-				setTimeout(() => {
-					var homed = document.getElementById("homedCard");
-					if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
-						return;
-					}
-					homed.style.display = "none";
-				}, 400);
+			else {
+				this.sendCode('echo "Unable to home. If in purge mode, try returning to origin, or restarting the machine."');
 			}
 		},/*
 		renderBed() {
@@ -811,32 +819,38 @@ export default {
 			this.rendering = setInterval(this.renderBed, 300);
 		},*/
 		async idleMode() {
-			this.idlePurging = true;
 			if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
 				this.sendCode('echo "One or more axes are not homed! Please home axes before moving."');
 				return;
 			}
-			if (this.axes[2].machinePosition != 0) {
+			if ((this.global["mode"] == 2) || (this.global["mode"] == 5)) {
+				this.idlePurging = true;
+				/*
+				if (this.axes[2].machinePosition != 0) {
+					await this.sendCode("M42 P4 S0");
+					await this.sendCode("G1 Z0 F4000");
+				}
 				await this.sendCode("M42 P4 S0");
-				await this.sendCode("G1 Z0 F4000");
+				await this.sendCode('G1 X{global.purgeX} Y{global.purgeY} F6000');
+				await this.sendCode('G1 Z{global.purgeZ} F4000');*/
+				await this.sendCode('M98 P"/macros/go_purge.g"');
+				await this.sendCode('M400');
+				this.interval = setInterval(this.purge, this.time*60000);
 			}
-			await this.sendCode("M42 P4 S0");
-			await this.sendCode('G1 X{global.purgeX} Y{global.purgeY} F6000');
-			await this.sendCode('G1 Z{global.purgeZ} F4000');
-			await this.sendCode('M400');
-			this.interval = setInterval(this.purge, this.time*60000);
+			else {
+				this.sendCode('echo "Unable to enter idle mode. Please home or restart the machine."');
+			}
 		},
 		async stopIdleMode() {
 			clearInterval(this.interval);
 			this.idlePurging = false;
-			await this.sendCode("M400");
-			await this.sendCode("M42 P4 S1");
+			//await this.sendCode("M42 P4 S1");
 		},
 		async refreshPurge() {
 			if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
 				this.sendCode('echo "One or more axes are not homed! Please home axes before moving."');
 				return;
-			}
+			}/*
 			if (this.axes[0].machinePosition != this.global["purgeX"] || this.axes[1].machinePosition != this.global["purgeY"]) {
 				await this.sendCode("M42 P4 S0");
 				await this.sendCode("G1 Z0 F4000");
@@ -847,11 +861,16 @@ export default {
 				await this.sendCode("M42 P4 S0");
 				await this.sendCode("G1 Z{global.purgeZ} F4000");
 			}
-			await this.sendCode("M42 P4 S0");
-			await this.sendCode('M400');
-			await this.purge();
-			await this.sendCode("M400");
-			await this.sendCode("M42 P4 S1");
+			await this.sendCode("M42 P4 S0");*/
+			if ((this.global["mode"] == 2) || (this.global["mode"] == 5)) {
+				await this.sendCode('M98 P"/macros/go_purge.g"');
+				await this.sendCode('M400');
+				await this.purge();
+			}
+			else {
+				this.sendCode('echo "Unable to perform refresh purge. Please home or restart the machine."');
+			}
+			//await this.sendCode("M42 P4 S1");
 		},
 		/*makeExtrusionString(extFactor) {				// possibly of use later if we reconfigure the way the additive pumps are set up
 			var template = 0;
@@ -935,7 +954,7 @@ export default {
 			if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
 				this.sendCode('echo "One or more axes are not homed! Please home axes before moving."');
 				return;
-			}
+			}/*
 			if (this.axes[0].machinePosition != this.global["purgeX"] || this.axes[1].machinePosition != this.global["purgeY"]) {
 				await this.sendCode("M42 P4 S0");
 				await this.sendCode("G1 Z0 F4000");
@@ -946,12 +965,16 @@ export default {
 				await this.sendCode("M42 P4 S0");
 				await this.sendCode("G1 Z{global.purgeZ} F4000");
 			}
-			await this.sendCode("M42 P4 S0");
-			await this.sendCode('M400');
-			await this.sendCode('M42 P3 S1');
-			await this.sendCode('T0');
-			await this.sendCode('M83');
-			var tempRat = parseFloat(this.ratio);
+			await this.sendCode("M42 P4 S0");*/
+			if ((this.global["mode"] == 2) || (this.global["mode"] == 5)) {
+				await this.sendCode('M98 P"/macros/go_purge.g"');
+				await this.sendCode('M400');
+				//await this.sendCode('M42 P3 S1');
+				await this.sendCode('M98 P"/macros/cartridge_air_on.g"');
+				await this.sendCode('G4 S2');
+				await this.sendCode('T0');
+				await this.sendCode('M83');
+				var tempRat = parseFloat(this.ratio);
 			/*if (this.needle == 0.25) {
 				var aS = -1*(3 * (tempRat/(tempRat+1)));
 				var bS = -1*(3 / (tempRat+1));
@@ -978,7 +1001,7 @@ export default {
 				else {
 					b2 = 0;
 				}
-				var purgeRatio = "80:" + String(a2) + ":80:" + String(b2);
+				var purgeRatio = "80:80:" + String(a2) + ":" + String(b2);
 				await this.sendCode("G1 E" + purgeRatio);
 				await this.purge();
 			}
@@ -987,30 +1010,40 @@ export default {
 				await this.sendCode("G1 E"+String(aS)+":"+String(bS));
 			}
 			await this.sendCode("M400");
-			await this.sendCode("M42 P3 S0");
-			await this.sendCode("M42 P4 S1");
+				//await this.sendCode("M42 P3 S0");
+				await this.sendCode('M98 P"/macros/cartridge_air_off.g"');
+				//await this.sendCode("M42 P4 S1");
+			}
+			else {
+				this.sendCode('echo "Unable to perform purge. Please home or restart the machine."');
+			}
 		},
 		async sneezePurge() {
-			if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
+			/*if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
 				this.sendCode('echo "One or more axes are not homed! Please home axes before moving."');
 				return;
-			}
+			}*/
 			await this.sendCode('T0');
 			await this.sendCode('M83');
 			await this.sendCode('M400');
-			await this.sendCode("M42 P3 S1");
+			//await this.sendCode("M42 P3 S1");
+			await this.sendCode('M98 P"/macros/cartridge_air_on.g"');
+			await this.sendCode('G4 S2');
 			await this.sendCode("G1 E2:2");
 			await this.sendCode("M400");
-			await this.sendCode("M42 P3 S0");
+			//await this.sendCode("M42 P3 S0");
+			await this.sendCode('M98 P"/macros/cartridge_air_off.g"');
 		},
 		async purge() {
-			if (this.axes[0].machinePosition != this.global["purgeX"] || this.axes[1].machinePosition != this.global["purgeY"] || this.axes[2].machinePosition != this.global["purgeZ"]) {
+			/*if (this.axes[0].machinePosition != this.global["purgeX"] || this.axes[1].machinePosition != this.global["purgeY"] || this.axes[2].machinePosition != this.global["purgeZ"]) {
 				await this.stopIdleMode();
 				return;
-			}
+			}*/
 			await this.sendCode('T0');
 			await this.sendCode('M83');
-			await this.sendCode("M42 P3 S1");
+			//await this.sendCode("M42 P3 S1");
+			await this.sendCode('M98 P"/macros/cartridge_air_on.g"');
+			await this.sendCode('G4 S2');
 			var tempRat = parseFloat(this.ratio);
 			if (this.needle == 0.25) {
 				var aS = -1*(3 * (tempRat/(tempRat+1)));
@@ -1026,75 +1059,93 @@ export default {
 				await this.sendCode("G1 E"+String(aS)+":"+String(bS));
 			}
 			await this.sendCode("M400");
-			await this.sendCode("M42 P3 S0");
+			await this.sendCode('M98 P"/macros/cartridge_air_off.g"');
 		},
 		async cleanPurging() {
-			if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
-				this.sendCode('echo "One or more axes are not homed! Please home axes before moving."');
-				return;
+			if ((this.global["mode"] == 2) || (this.global["mode"] == 5)) {
+				await this.sendCode('M98 P"/macros/cleanpurge.g"');
 			}
 			else {
-				await this.sendCode('M98 P"cleanpurge.g"');
+				this.sendCode('echo "Unable to perform clean purge. Please home or restart the machine"');
 			}
 		},
 		async airPressure() {
-			if (!this.air) {
+			/*if (!this.air) {
 				await this.sendCode('M42 P3 S1');
 			}
 			else {
 				await this.sendCode('M42 P3 S0');
+			}*/
+			if (this.air == 0) {
+				await this.sendCode('M98 P"/macros/cartridge_air_on.g"');
+			}
+			else {
+				await this.sendCode('M98 P"/macros/cartridge_air_off.g"');
+			}
+		},
+		async lightSwitch() {
+			if (this.light == 0) {
+				await this.sendCode('M98 P"/macros/light_on.g"');
+			}
+			else {
+				await this.sendCode('M98 P"/macros/light_off.g"');
 			}
 		},
 		async goTo() {
 			if (this.xInp || this.yInp) {
-				if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
-					this.sendCode('echo "One or more axes are not homed! Please home axes before moving."');
-					var x = document.getElementById("xx");
-					var y = document.getElementById("yy");
-					x.value = undefined;
-					y.value = undefined;
-					this.xInp = undefined;
-					this.yInp = undefined;
-					return;
-				}
-				if ((this.xInp != undefined && (this.xInp > this.axes[0].max || this.xInp < this.axes[0].min)) || (this.yInp != undefined && (this.yInp > this.axes[1].max || this.yInp < this.axes[1].min))) {
-					this.sendCode('echo "Travel beyond machine limits!!!"');
-					x = document.getElementById("xx");
-					y = document.getElementById("yy");
-					x.value = undefined;
-					y.value = undefined;
-					this.xInp = undefined;
-					this.yInp = undefined;
-					return;
-				}
-				if (this.axes[2].machinePosition < 0) {
-					await this.sendCode("M42 P4 S0");
-					await this.sendCode("G1 Z0 F4000");
-				}
-				if (this.xInp != this.axes[0].machinePosition && this.yInp != this.axes[1].machinePosition) {
-					if (this.yInp == undefined) {
-						await this.sendCode("M42 P4 S0");
+				if (this.global["mode"] == 2) {
+					if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
+						this.sendCode('echo "One or more axes are not homed! Please home axes before moving."');
+						var x = document.getElementById("xx");
+						var y = document.getElementById("yy");
+						x.value = undefined;
+						y.value = undefined;
+						this.xInp = undefined;
+						this.yInp = undefined;
+						return;
+					}
+					if ((this.xInp != undefined && (this.xInp > this.axes[0].max || this.xInp < this.axes[0].min)) || (this.yInp != undefined && (this.yInp > this.axes[1].max || this.yInp < this.axes[1].min))) {
+						this.sendCode('echo "Travel beyond machine limits!!!"');
+						x = document.getElementById("xx");
+						y = document.getElementById("yy");
+						x.value = undefined;
+						y.value = undefined;
+						this.xInp = undefined;
+						this.yInp = undefined;
+						return;
+					}
+					if (this.axes[2].machinePosition < 0) {
+						//await this.sendCode("M42 P4 S0");
+						await this.sendCode("G1 Z0 F4000");
+					}
+					if (this.xInp != this.axes[0].machinePosition && this.yInp != this.axes[1].machinePosition) {
+						if (this.yInp == undefined) {
+							//await this.sendCode("M42 P4 S0");
+							await this.sendCode("G1 X"+this.xInp+"F6000");
+						}
+						else if (this.xInp == undefined) {
+							//await this.sendCode("M42 P4 S0");
+							await this.sendCode("G1 Y"+this.yInp+"F6000");
+						}
+						else {
+							//await this.sendCode("M42 P4 S0");
+							await this.sendCode("G1 X"+this.xInp+" Y"+this.yInp+"F6000");
+						}
+					}
+					else if (this.xInp != this.axes[0].machinePosition && this.xInp != undefined) {
+						//await this.sendCode("M42 P4 S0");
 						await this.sendCode("G1 X"+this.xInp+"F6000");
 					}
-					else if (this.xInp == undefined) {
-						await this.sendCode("M42 P4 S0");
+					else if (this.yInp != this.axes[1].machinePosition && this.yInp != undefined) {
+						//await this.sendCode("M42 P4 S0");
 						await this.sendCode("G1 Y"+this.yInp+"F6000");
 					}
-					else {
-						await this.sendCode("M42 P4 S0");
-						await this.sendCode("G1 X"+this.xInp+" Y"+this.yInp+"F6000");
-					}
+					await this.sendCode("M400");
+					//await this.sendCode("M42 P4 S1");
 				}
-				else if (this.xInp != this.axes[0].machinePosition && this.xInp != undefined) {
-					await this.sendCode("M42 P4 S0");
-					await this.sendCode("G1 X"+this.xInp+"F6000");
+				else {
+					this.sendCode('echo "Unable to go to location. Please exit purging mode, home, or restart the machine."');
 				}
-				else if (this.yInp != this.axes[1].machinePosition && this.yInp != undefined) {
-					await this.sendCode("M42 P4 S0");
-					await this.sendCode("G1 Y"+this.yInp+"F6000");
-				}
-				await this.sendCode("M400");
-				await this.sendCode("M42 P4 S1");
 			}/*
 			setTimeout(() => {
 				this.renderBed();
@@ -1114,22 +1165,37 @@ export default {
 				this.zInp = undefined;
 				return;
 			}
-			if (this.zInp > this.axes[2].max || this.zInp < this.axes[2].min) {
-				this.sendCode('echo "Travel beyond machine limits!!!')
+			if (this.global["mode"] == 2) {
+				if (this.zInp > this.axes[2].max || this.zInp < this.axes[2].min) {
+					this.sendCode('echo "Travel beyond machine limits!!!')
+					z = document.getElementById("zz");
+					z.value = undefined;
+					this.zInp = undefined;
+					return;
+				}
+				//await this.sendCode("M42 P4 S0");
+				await this.sendCode("G1 Z"+this.zInp);
 				z = document.getElementById("zz");
 				z.value = undefined;
 				this.zInp = undefined;
-				return;
+				await this.sendCode("M400");
+				//await this.sendCode("M42 P4 S1");
 			}
-			await this.sendCode("M42 P4 S0");
-			await this.sendCode("G1 Z"+this.zInp);
-			z = document.getElementById("zz");
-			z.value = undefined;
-			this.zInp = undefined;
-			await this.sendCode("M400");
-			await this.sendCode("M42 P4 S1");
+			else {
+				this.sendCode('echo "Unable to go to location. Please exit purging mode, home, or restart the machine."');
+			}
 		},
 		async setupLoc() {
+			if (this.global["mode"] == 2) {
+				await this.sendCode('M98 p"/macros/go_purge.g"');
+			}
+			else if (this.global["purge_loc"] == true) {
+				this.sendCode('echo "You are already in purge location."');
+			}
+			else {
+				this.sendCode('echo "Unable to go to purge location. Please home or restart the machine."');
+			}
+			/*
 			if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
 				this.sendCode('echo "One or more axes are not homed! Please home axes before moving."');
 				return;
@@ -1145,32 +1211,48 @@ export default {
 				await this.sendCode("G1 Z{global.purgeZ} F4000");
 			}
 			await this.sendCode("M400");
-			await this.sendCode("M42 P4 S1");
+			await this.sendCode("M42 P4 S1");*/
+		},
+		async goOrigin() {
+			if (this.global["mode"] == 5) {
+				await this.sendCode('M98 P"/macros/go_origin.g"');
+			}
+			else if (this.global["purge_loc"] != true) {
+				this.sendCode('echo "Not currently in purge location."');
+			}
+			else {
+				this.sendCode('echo "Unable to go to origin. Please home or restart the machine."');
+			}
 		},
 		async sendTheCode(codetosend, amount, axis) {
 			if (!this.axes[axis].homed) {
 				this.sendCode('echo "Axis not homed! Please home axis before moving."');
 				return;
 			}
-			if (this.axes[axis].machinePosition+amount>this.axes[axis].max || this.axes[axis].machinePosition+amount<this.axes[axis].min) {
-				this.sendCode('echo "Too far!!!"');
-				return;
+			if (this.global["mode"] == 2) {
+				if (this.axes[axis].machinePosition+amount>this.axes[axis].max || this.axes[axis].machinePosition+amount<this.axes[axis].min) {
+					this.sendCode('echo "Too far!!!"');
+					return;
+				}
+				while (this.started == true && this.codeIdle == true) {
+					try {
+						this.codeIdle = false;
+						//await this.sendCode("M42 P4 S0");
+						this.codeReply = await this.sendCode(codetosend+String(this.axes[axis].machinePosition+amount));
+						await this.sendCode("M400");
+						//await this.sendCode("M42 P4 S1");
+						setTimeout(() => {
+							//this.renderBed();
+							this.codeIdle = true;
+						}, 400);
+					}
+					catch(e) {
+						console.warn(e);
+					}
+				}
 			}
-			while (this.started == true && this.codeIdle == true) {
-				try {
-					this.codeIdle = false;
-					await this.sendCode("M42 P4 S0");
-					this.codeReply = await this.sendCode(codetosend+String(this.axes[axis].machinePosition+amount));
-					await this.sendCode("M400");
-					await this.sendCode("M42 P4 S1");
-					setTimeout(() => {
-						//this.renderBed();
-						this.codeIdle = true;
-					}, 400);
-				}
-				catch(e) {
-					console.warn(e);
-				}
+			else {
+				this.sendCode('echo "Unable to jog. Please exit purge mode, home, or restart the machine."');
 			}
 		},
 		async refresh() {
@@ -1217,6 +1299,9 @@ export default {
 					else if (this.status != "idle") {
 						break;
 					}
+					else if (this.global["mode"] != 2) {
+						break;
+					}
 					else {
 						this.started = true;
 						this.sendTheCode("G1 X", -10, 0);
@@ -1229,6 +1314,9 @@ export default {
 						break;
 					}
 					else if (this.status != "idle") {
+						break;
+					}
+					else if (this.global["mode"] != 2) {
 						break;
 					}
 					else {
@@ -1245,6 +1333,9 @@ export default {
 					else if (this.status != "idle") {
 						break;
 					}
+					else if (this.global["mode"] != 2) {
+						break;
+					}
 					else{
 						this.started = true;
 						this.sendTheCode("G1 X", 10, 0);
@@ -1257,6 +1348,9 @@ export default {
 						break;
 					}
 					else if (this.status != "idle") {
+						break;
+					}
+					else if (this.global["mode"] != 2) {
 						break;
 					}
 					else {
@@ -1273,6 +1367,9 @@ export default {
 					else if (this.status != "idle") {
 						break;
 					}
+					else if (this.global["mode"] != 2) {
+						break;
+					}
 					else {
 						this.started = true;
 						this.sendTheCode("G1 Z", 10, 2);
@@ -1285,6 +1382,9 @@ export default {
 						break;
 					}
 					else if (this.status != "idle") {
+						break;
+					}
+					else if (this.global["mode"] != 2) {
 						break;
 					}
 					else {
