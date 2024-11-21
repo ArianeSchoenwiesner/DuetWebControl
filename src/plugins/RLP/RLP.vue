@@ -1052,8 +1052,8 @@ export default {
 				await this.sendCode("G1 E"+String(aS)+":"+String(bS));
 			}
 			else if (this.needle == 0.5) {
-				aS = -1*(3 * (tempRat/(tempRat+1)));
-				bS = -1*(3 / (tempRat+1));
+				aS = -1*(4.4 * (tempRat/(tempRat+1)));
+				bS = -1*(4.4 / (tempRat+1));
 				console.log(this.makeExtrusionString(160));
 				await this.sendCode("G1 "+this.makeExtrusionString(160));
 				await this.sendCode("G1 E"+String(aS)+":"+String(bS));
