@@ -62,7 +62,7 @@ textarea {
 				<div class="ma-2">
 					<connect-btn v-if="showConnectButton" class="mb-2" block/>
 				</div>
-				<upload-btn target="start" :elevation="1" class="ma-2" block/>
+				<!--upload-btn target="start" :elevation="1" class="ma-2" block/-->
 			</div>
 
 			<v-list class="pt-0" :dense="!$vuetify.breakpoint.smAndDown" :expand="!$vuetify.breakpoint.smAndDown">
@@ -91,6 +91,7 @@ textarea {
 			</v-app-bar-nav-icon>
 			<v-toolbar-title class="px-1">
 				<a href="javascript:void(0)" id="title">{{ name }}</a>
+				<a id="ip"> {{ ip }}</a>
 			</v-toolbar-title>
 			<connect-btn v-if="showConnectButton" class="hidden-xs-only ml-3"/>
 
@@ -100,7 +101,7 @@ textarea {
 
 			<v-spacer/>
 
-			<upload-btn target="start" :elevation="1" class="mr-3 hidden-sm-and-down"/>
+			<!--upload-btn target="start" :elevation="1" class="mr-3 hidden-sm-and-down"/-->
 			<emergency-btn/>
 		</v-app-bar>
 
@@ -165,7 +166,7 @@ export default {
 			boards: state => state.machine.model.boards,
 			menuDirectory: state => state.machine.model.directories.menu,
 			name: state => state.machine.model.network.name,
-			ip: state => state.network.interfaces[0].actualIP,	// problem here, can't figure out what "interfaces" value is
+			ip: state=> state.machine.model.network.interfaces[0].actualIP,
 			status: state => state.machine.model.state.status,
 
 			darkTheme: state => state.settings.darkTheme,
@@ -254,6 +255,8 @@ export default {
 
 		// Attempt to load the settings
 		this.load();
+
+		//console.log(this.ip);
 
 		// Validate navigation
 		Vue.prototype.$vuetify = this.$vuetify;

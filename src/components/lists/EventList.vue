@@ -24,7 +24,7 @@ th:last-child {
 <template>
 	<div class="component">
 		<v-data-table
-			:headers="headers" :items="events" item-key="date"
+			height="27.8vh" :headers="headers" :items="events" item-key="date"
 			disable-pagination hide-default-footer :mobile-breakpoint="0"
 			:custom-sort="sort" :sort-by.sync="sortBy" :sort-desc.sync="sortDesc" must-sort
 			class="elevation-3" :class="{ 'empty-table-fix' : !events.length }">

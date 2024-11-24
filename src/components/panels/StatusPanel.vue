@@ -81,10 +81,10 @@ a:not(:hover) {
 								<span>
 									{{ $display(move.extruders[index].position*0.05, 3) }}
 								</span-->
-							<v-col v-for="(extruder, index) in move.extruders" :key="index" class="d-flex flex-column align-center">
+							<v-col v-for="(extruder, index) in extruders" :key="index" class="d-flex flex-column align-center">
 								<strong>
 									<div>
-									{{ $t(["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"][index]) }}
+									{{ $t(["A","B","A2","B2","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"][index]) }}
 									</div>
 								</strong>
 								<span>
@@ -245,6 +245,7 @@ export default {
 			boards: state => state.boards,
 			fans: state => state.fans,
 			move: state => state.move,
+			extruders: state=> state.global.extruder_num,
 			machineMode: state => state.state.machineMode,
 			sensors: state => state.sensors,
 			status: state => state.state.status

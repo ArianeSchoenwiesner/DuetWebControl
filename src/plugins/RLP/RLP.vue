@@ -12,7 +12,7 @@
 				</v-card>
 			</div>
 		</v-row>
-		<v-row id="materialCard" class="justify-center stretch no-gutters">
+		<!--v-row id="materialCard" class="justify-center stretch no-gutters">
 			<div v-if='!global["material"]'>
 				<v-card color="warning" class="ma-2">
 					<v-card-title>
@@ -23,7 +23,7 @@
 					</v-card-title>
 				</v-card>
 			</div>
-		</v-row>
+		</v-row-->
 		<v-row class="justify-left">
 			<v-col cols=8>
 				<v-card id="purging" :disabled="status!='idle'" class="justify-left my-1 pa-6">
@@ -54,12 +54,12 @@
 								</v-btn>
 							</v-btn-toggle>
 							<br>
-							<br>
-							<div v-if="move.extruders.length>2">
+							<div v-if="extruders>2">
+								<br>
 								Additive %
 								<br>
 								<br>
-								<v-row v-for="(extruder, index) in move.extruders" :key="index" class="mx-4">
+								<v-row v-for="(extruder, index) in extruders" :key="index" class="mx-4">
 									<div v-if="index > 1">
 										<v-row>
 											<input type="checkbox" label='[A2,B2,El,Fl,Gl,Hl,Il,Jl,Kl,Ll,Ml,Nl,Ol,Pl,Ql,Rl,Sl,Tl,Ul,Vl,Wl][index-2]' v-model='adds[index-2][1]' @change="refreshAdd($event, index-2)">
@@ -122,20 +122,20 @@
 								Ratio Set At {{ $t(ratioString) }}
 								<br>
 								<div v-if="!idlePurging">
-									<v-btn color="green" @click="fullPurge" block>
+									<!--v-btn color="green" @click="fullPurge" block>
+										Purge
+									</v-btn>
+									<br-->
+									<v-btn color="green" @click="refreshPurge" block>
 										Purge
 									</v-btn>
 									<br>
-									<v-btn color="green" @click="refreshPurge" block>
-										Refresh Purge
-									</v-btn>
-									<br>
-									<!--v-btn color="teal" @click="printString" block>
+									<!--br>
+									<v-btn color="teal" @click="printString" block>
 										Print Extrusion String
 									</v-btn-->
 								</div>
 							</div>
-							<br>
 							<div v-if="needle && ratio && time">
 								<div v-if="!idlePurging">
 									<v-btn color="green" @click="idleMode" block>
@@ -356,7 +356,7 @@
 												Home All
 											</v-btn>
 										</v-row>
-										<v-row>
+										<!--v-row>
 											<v-btn @click="homing('x')" color="orange darken-3" class="ma-1">
 												Home X
 											</v-btn>
@@ -366,7 +366,7 @@
 											<v-btn @click="homing('z')" color="orange darken-3" class="ma-1">
 												Home Z
 											</v-btn>
-										</v-row>
+										</v-row-->
 									</v-expansion-panel-content>
 								</v-expansion-panel>
 							</v-expansion-panels>
@@ -395,6 +395,7 @@ export default {
 			systemDirectory: (state) => state.directories.system,
 			move: (state) => state.move,
 			axes: (state) => state.move.axes,
+			extruders: (state) => state.global.extruder_num,
 			global: (state) => state.global,
 			status: (state) => state.state.status,
 			air: (state) => state.fans[0].actualValue,
@@ -657,6 +658,12 @@ export default {
 					}
 				}
 			}
+			var ratioArray = this.ratioString.split(":");
+			this.ratioString = ratioArray[0] + ":";
+			for (var i = 1; i < this.extruders - 1; i++) {
+				this.ratioString += ratioArray[i] + ":";
+			}
+			this.ratioString += ratioArray[this.extruders - 1];
 		},/*
 		getMousePos(e) {
 			if (this.clickerEnabled && this.status=="idle") {
@@ -1054,8 +1061,8 @@ export default {
 			else if (this.needle == 0.5) {
 				aS = -1*(4.4 * (tempRat/(tempRat+1)));
 				bS = -1*(4.4 / (tempRat+1));
-				console.log(this.makeExtrusionString(160));
-				await this.sendCode("G1 "+this.makeExtrusionString(160));
+				console.log(this.makeExtrusionString(80));
+				await this.sendCode("G1 "+this.makeExtrusionString(80));
 				await this.sendCode("G1 E"+String(aS)+":"+String(bS));
 			}
 			await this.sendCode("M400");
