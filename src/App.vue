@@ -7,7 +7,7 @@
 				<div class="ma-2">
 					<connect-btn v-if="showConnectButton" class="mb-2" block />
 				</div>
-				<upload-btn target="start" :elevation="1" class="ma-2" block />
+				<!--upload-btn target="start" :elevation="1" class="ma-2" block/-->
 			</div>
 
 			<v-list class="pt-0" :dense="!$vuetify.breakpoint.smAndDown" :expand="!$vuetify.breakpoint.smAndDown">
@@ -37,9 +37,8 @@
 				<v-icon>mdi-menu</v-icon>
 			</v-app-bar-nav-icon>
 			<v-toolbar-title class="px-1">
-				<a href="javascript:void(0)" id="title">
-					{{ name }}
-				</a>
+				<a href="javascript:void(0)" id="title">{{ name }}</a>
+				<a id="ip"> {{ ip }}</a>
 			</v-toolbar-title>
 			<connect-btn v-if="showConnectButton" class="hidden-xs-only ml-3" />
 
@@ -49,10 +48,11 @@
 
 			<v-spacer />
 
-			<upload-btn target="start" :elevation="1" class="mr-3 hidden-sm-and-down" />
-			<emergency-btn />
+			<!--upload-btn target="start" :elevation="1" class="mr-3 hidden-sm-and-down"/-->
+			<emergency-btn/>
 		</v-app-bar>
 
+		<v-main id="content" :style="`margin-bottom: ${bottomMargin}px`">
 		<v-main id="content" :style="`margin-bottom: ${bottomMargin}px`">
 			<v-container class="hidden-sm-and-down" id="global-container" fluid>
 				<fff-container-panel v-if="isFFForUnset" />
@@ -194,7 +194,9 @@ export default Vue.extend({
 		}
 
 		// Attempt to load the settings
-		store.dispatch("settings/load");
+		this.load();
+
+		//console.log(this.ip);
 
 		// Validate navigation
 		Vue.prototype.$vuetify = this.$vuetify;

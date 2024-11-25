@@ -9,13 +9,8 @@
 				<v-card-text>
 					{{ $t("dialog.connect.prompt") }}
 
-					<v-text-field v-show="!passwordRequired" v-model="hostname" :autofocus="!passwordRequired"
-								  :placeholder="$t('dialog.connect.hostPlaceholder')" :rules="hostnameRules" required />
-					<v-text-field type="password"
-								  :placeholder="$t(passwordRequired ? 'dialog.connect.passwordPlaceholder' : 'dialog.connect.passwordPlaceholderOptional')"
-								  v-model="password" :autofocus="passwordRequired" :rules="passwordRules"
-								  :required="passwordRequired" />
-					<v-checkbox v-model="rememberPassword" :label="$t('dialog.connect.rememberPassword')" />
+					<v-text-field v-show="!passwordRequired" v-model="hostname" :autofocus="!passwordRequired" :placeholder="$t('dialog.connect.hostPlaceholder')" :rules="[v => !!v || $t('dialog.connect.hostRequired')]" required></v-text-field>
+					<!--v-text-field type="password" :placeholder="$t(passwordRequired ? 'dialog.connect.passwordPlaceholder' : 'dialog.connect.passwordPlaceholderOptional')" v-model="password" :autofocus="passwordRequired" :rules="[v => !!v || !passwordRequired || $t('dialog.connect.passwordRequired')]" :required="passwordRequired"></v-text-field-->
 				</v-card-text>
 
 				<v-card-actions>
@@ -63,16 +58,9 @@ export default Vue.extend({
 				this.close();
 
 				try {
-					await store.dispatch("connect", {
-						hostname: this.hostname,
-						password: this.password
-					});
-					if (this.rememberPassword) {
-						this.savePassword();
-					} else {
-						this.clearPassword();
-					}
-					this.password = "";
+					await this.connect({ hostname: this.hostname, password: this.password });
+					this.$router.push("/RLP");
+					this.password = '';
 				} catch (e) {
 					console.warn(e);
 					store.commit("showConnectDialog");

@@ -2,9 +2,13 @@
 	<v-dialog :value="shown" :persistent="isPersistent" width="480">
 		<v-card color="primary" dark>
 			<v-card-title class="subtitle-1">
-				{{ message }}
+				<strong>
+					DON'T PANIC
+				</strong>
 			</v-card-title>
-
+			<v-card-subtitle>
+				{{ message }}
+			</v-card-subtitle>
 			<v-card-text>
 				<v-progress-linear :indeterminate="connectingProgress < 0" :value="connectingProgress" color="white"
 								   class="mb-0" />
