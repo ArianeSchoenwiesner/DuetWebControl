@@ -14,7 +14,7 @@
    },
    "dependencies": {
       "@duet3d/motionanalysis": "^3.4.0",
-      "@duet3d/objectmodel": "^3.5.1",
+      "@duet3d/objectmodel": "^3.5.3",
       "@sindarius/gcodeviewer": "^3.7.4",
       "chart.js": "^2.9.4",
       "chartjs-adapter-date-fns": "^1.0.0",
