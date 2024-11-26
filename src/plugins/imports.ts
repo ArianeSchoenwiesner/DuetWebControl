@@ -55,4 +55,14 @@ export default initCollection(DwcPlugin, [
             "./OnScreenKeyboard/index"
         )
     },
+	{
+        id: "RLP",
+        name: "RLP",
+        author: "Ariane Schoenwiesner",
+        version: "1.0.8",
+        loadDwcResources: () => import(
+            /* webpackChunkName: "RLP" */
+            "./RLP/index"
+        )
+    },
 ]);

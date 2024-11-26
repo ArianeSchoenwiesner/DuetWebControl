@@ -53,7 +53,6 @@
 		</v-app-bar>
 
 		<v-main id="content" :style="`margin-bottom: ${bottomMargin}px`">
-		<v-main id="content" :style="`margin-bottom: ${bottomMargin}px`">
 			<v-container class="hidden-sm-and-down" id="global-container" fluid>
 				<fff-container-panel v-if="isFFForUnset" />
 				<cnc-container-panel v-else />
@@ -194,7 +193,7 @@ export default Vue.extend({
 		}
 
 		// Attempt to load the settings
-		this.load();
+		store.dispatch("settings/load");
 
 		//console.log(this.ip);
 

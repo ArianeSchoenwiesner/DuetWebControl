@@ -104,17 +104,17 @@ export default [ /*
 			/* webpackChunkName: "ObjectModelBrowser" */
 			'./ObjectModelBrowser/index.js'
 		)
-	}),/*
+	}),
 	new DwcPlugin({
 		id: 'OnScreenKeyboard',
 		name: 'On-Screen Keyboard',
 		author: 'Duet3D Ltd',
 		version,
-		loadDwcResources: () => import(*/
-			/* webpackChunkName: "OnScreenKeyboard" *//*
+		loadDwcResources: () => import(
+			/* webpackChunkName: "OnScreenKeyboard" */
 			'./OnScreenKeyboard/index.js'
 		)
-	}),*/
+	}),
 	// #DWC_PLUGIN# <- this marker is used by the plugin build script, leave it here
 	// Add your own plugins here during development...
 	new DwcPlugin({

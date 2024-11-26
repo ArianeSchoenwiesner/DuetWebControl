@@ -58,9 +58,17 @@ export default Vue.extend({
 				this.close();
 
 				try {
-					await this.connect({ hostname: this.hostname, password: this.password });
+					await store.dispatch("connect", {
+						hostname: this.hostname,
+						password: this.password
+					});
 					this.$router.push("/RLP");
-					this.password = '';
+					if (this.rememberPassword) {
+						this.savePassword();
+					} else {
+						this.clearPassword();
+					}
+					this.password = "";
 				} catch (e) {
 					console.warn(e);
 					store.commit("showConnectDialog");
