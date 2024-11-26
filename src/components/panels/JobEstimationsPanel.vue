@@ -88,7 +88,7 @@ export default Vue.extend({
 			return null;
 		},
 		jobDuration() {
-			return isPrinting(this.status) ? this.job.duration : this.job.lastDuration;
+			return isPrinting(store.state.machine.model.state.status) ? store.state.machine.model.job.duration : store.state.machine.model.job.lastDuration;
 		}
 	},
 	data() {

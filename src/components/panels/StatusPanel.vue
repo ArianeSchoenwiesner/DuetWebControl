@@ -95,18 +95,30 @@ a:not(:hover) {
 								<span>
 									{{ $display(move.extruders[index].position*0.05, 3) }}
 								</span-->
-							<v-col v-for="(extruder, index) in model.move.extruders" :key="index" class="d-flex flex-column align-center">
-								<strong>
-									<div>
-									{{ $t(["A","B","A2","B2","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"][index]) }}
-									</div>
-								</strong>
-								<span>
-									<div>
-										{{ $display(model.move.extruders[index].position*0.05, 0) }}
-									</div>
-								</span>
-							</v-col>
+							<v-row v-if="model.global.extruder_num>2">
+								<v-col v-for="(extruder, index) in model.move.extruders" :key="index" class="d-flex flex-column align-center">
+									<strong>
+										<div>
+										{{ $t(["A","B","A2","B2","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"][index]) }}
+										</div>
+									</strong>
+									<span>
+										<div>
+											{{ $display(model.move.extruders[index].position*0.05, 0) }}
+										</div>
+									</span>
+								</v-col>
+							</v-row>
+							<v-row v-else>
+								<v-col class="d-flex flex-column align-center">
+									<strong><div>A</div></strong>
+									<span><div>{{ $display(model.move.extruders[0].position*0.05, 0) }}</div></span>
+								</v-col>
+								<v-col class="d-flex flex-column align-center">
+									<strong><div>B</div></strong>
+									<span><div>{{ $display(model.move.extruders[1].position*0.05, 0) }}</div></span>
+								</v-col>
+							</v-row>
 							<!--/v-col-->
 						</v-row>
 					</v-col>
@@ -160,7 +172,7 @@ a:not(:hover) {
 							Max Speed
 						</strong>
 						<span>
-							{{ displaySpeed(model.move.currentMove.requestedSpeed) }}
+							{{ $displayMoveSpeed(model.move.currentMove.requestedSpeed) }}
 						</span>
 					</v-col>
 
@@ -169,9 +181,20 @@ a:not(:hover) {
 							Speed
 						</strong>
 						<span>
-							{{ displaySpeed(model.move.currentMove.topSpeed) }}
+							{{ $displayMoveSpeed(model.move.currentMove.topSpeed) }}
 						</span>
 					</v-col>
+					<!--v-col v-if="isFinite(model.move.currentMove.extrusionRate) && isFFForUnset"
+							class="d-flex flex-column align-center">
+						<strong>
+							<a href="javascript:void(0)" @click="displayVolumetricFlow = !displayVolumetricFlow">
+								{{ displayVolumetricFlow ? $t("panel.status.volumetricFlow") : $t("panel.status.extrusionRate") }}
+							</a>
+						</strong>
+						<span>
+							{{ displayVolumetricFlow ? $display(volumetricFlow, 1, "mL/s") : $displayMoveSpeed(model.move.currentMove.extrusionRate) }}
+						</span>
+					</v-col-->
 						<!--/v-row>
 					</v-col-->
 				</v-row>

@@ -11,14 +11,15 @@
 			</div>
 
 			<v-list class="pt-0" :dense="!$vuetify.breakpoint.smAndDown" :expand="!$vuetify.breakpoint.smAndDown">
-				<v-list-group v-for="(category, index) in categories" :key="index" :prepend-icon="category.icon"
+				<div v-for="(category, index) in categories" :key="index">
+				<!--v-list-group v-for="(category, index) in categories" :key="index" :prepend-icon="category.icon"
 							  no-action :value="isExpanded(category)">
 					<template #activator>
-						<v-list-item-title class="mr-0">
+						<!--v-list-item-title class="mr-0">
 							{{ category.translated ? category.caption : $t(category.caption) }}
 						</v-list-item-title>
-					</template>
-
+					</template-->
+					<br>
 					<v-list-item v-for="(page, pageIndex) in getPages(category)" :key="`${index}-${pageIndex}`" v-ripple
 								 :to="page.path" @click.prevent="">
 						<v-list-item-icon>
@@ -28,7 +29,8 @@
 							{{ page.translated ? page.caption : $t(page.caption) }}
 						</v-list-item-title>
 					</v-list-item>
-				</v-list-group>
+				<!--/v-list-group-->
+				</div>
 			</v-list>
 		</v-navigation-drawer>
 
@@ -38,7 +40,7 @@
 			</v-app-bar-nav-icon>
 			<v-toolbar-title class="px-1">
 				<a href="javascript:void(0)" id="title">{{ name }}</a>
-				<a id="ip"> {{ ip }}</a>
+				<!--a id="ip"> {{ ip }}</a-->
 			</v-toolbar-title>
 			<connect-btn v-if="showConnectButton" class="hidden-xs-only ml-3" />
 
@@ -70,7 +72,7 @@
 		<notification-display />
 
 		<v-bottom-navigation v-if="showBottomNavigation" app>
-			<v-menu v-for="(category, index) in categories" :key="index" top offset-y>
+			<!--v-menu v-for="(category, index) in categories" :key="index" top offset-y>
 				<template #activator="{ on }">
 					<v-btn v-on="on">
 						{{ category.translated ? category.caption : $t(category.caption) }}
@@ -83,7 +85,26 @@
 					<v-icon v-text="page.icon" class="mr-2" />
 					{{ page.translated ? page.caption : $t(page.caption) }}
 				</v-list-item>
-			</v-menu>
+			</v-menu-->
+			<div v-for="(category, index) in categories" :key="index">
+				<!--v-list-group v-for="(category, index) in categories" :key="index" :prepend-icon="category.icon"
+							  no-action :value="isExpanded(category)">
+					<template #activator>
+						<!--v-list-item-title class="mr-0">
+							{{ category.translated ? category.caption : $t(category.caption) }}
+						</v-list-item-title>
+					</template-->
+				<v-list-item v-for="(page, pageIndex) in getPages(category)" :key="`${index}-${pageIndex}`" v-ripple
+								:to="page.path" @click.prevent="">
+					<v-list-item-icon>
+						<v-icon v-text="page.icon"></v-icon>
+					</v-list-item-icon>
+					<v-list-item-title>
+						{{ page.translated ? page.caption : $t(page.caption) }}
+					</v-list-item-title>
+				</v-list-item>
+				<!--/v-list-group-->
+				</div>
 		</v-bottom-navigation>
 
 		<connect-dialog />
@@ -118,6 +139,7 @@ export default Vue.extend({
 		jobProgress(): number { return store.getters["machine/model/jobProgress"]; },
 		injectedComponents(): Array<{ name: string, component: Component }> { return store.state.uiInjection.injectedComponents; },
 		model(): ObjectModel { return store.state.machine.model; },
+		ip(): string | null { return store.state.machine.model.network.interfaces[0].actualIP },
 		categories(): Array<MenuCategory> {
 			return Object.keys(Menu)
 				.map(key => Menu[key])

@@ -4,20 +4,21 @@ import VueRouter, { RouteConfig } from "vue-router";
 
 import store from "@/store";
 
-import Status from "./Control/Status.vue";
-import Dashboard from "./Control/Dashboard.vue";
-import Console from "./Control/Console.vue";
+//import RLP from "../plugins/RLP/RLP.vue";
+//import Status from "./Control/Status.vue";
+//import Dashboard from "./Control/Dashboard.vue";
+//import Console from "./Control/Console.vue";
 
-import Filaments from "./Files/Filaments.vue";
+//import Filaments from "./Files/Filaments.vue";
 import Jobs from "./Files/Jobs.vue";
-import Macros from "./Files/Macros.vue";
-import System from "./Files/System.vue";
+//import Macros from "./Files/Macros.vue";
+//import System from "./Files/System.vue";
 
 import JobStatus from "./Job/Status.vue";
-import Webcam from "./Job/Webcam.vue";
+//import Webcam from "./Job/Webcam.vue";
 
-import General from "./Settings/General.vue";
-import Machine from "./Settings/Machine.vue";
+//import General from "./Settings/General.vue";
+//import Machine from "./Settings/Machine.vue";
 import Plugins from "./Settings/Plugins.vue";
 
 import Page404 from "./Page404.vue";
@@ -92,7 +93,13 @@ export const Menu = Vue.observable<Record<string, MenuCategory>>({
 		icon: "mdi-tune",
 		caption: "menu.control.caption",
 		pages: [
-			{
+			/*{
+				icon: "mdi-view-dashboard",
+				caption: "menu.control.dashboard",
+				path: "/RLP",
+				component: RLP
+			},*/
+			/*{
 				icon: "mdi-list-status",
 				caption: "menu.control.status",
 				condition: () => Vue.prototype.$vuetify && Vue.prototype.$vuetify.breakpoint.smAndDown,
@@ -110,7 +117,7 @@ export const Menu = Vue.observable<Record<string, MenuCategory>>({
 				caption: "menu.control.console",
 				path: "/Console",
 				component: Console
-			}
+			}*/
 		],
 		translated: false
 	},
@@ -124,13 +131,13 @@ export const Menu = Vue.observable<Record<string, MenuCategory>>({
 				path: "/Job/Status",
 				component: JobStatus
 			},
-			{
+			/*{
 				icon: "mdi-webcam",
 				caption: "menu.job.webcam",
 				path: "/Job/Webcam",
 				condition: () => store.state.settings.webcam.enabled,
 				component: Webcam
-			}
+			}*/
 		],
 		translated: false
 	},
@@ -138,20 +145,20 @@ export const Menu = Vue.observable<Record<string, MenuCategory>>({
 		icon: "mdi-sd",
 		caption: "menu.files.caption",
 		pages: [
-			{
+			/*{
 				icon: "mdi-database",
 				caption: "menu.files.filaments",
 				path: "/Files/Filaments",
 				condition: () => !store.state.machine.model.state.machineMode || store.state.machine.model.state.machineMode === MachineMode.fff,
 				component: Filaments
-			},
+			},*/
 			{
 				icon: "mdi-play",
 				caption: "menu.files.jobs",
 				path: "/Files/Jobs",
 				component: Jobs
 			},
-			{
+			/*{
 				icon: "mdi-polymer",
 				caption: "menu.files.macros",
 				path: "/Files/Macros",
@@ -162,7 +169,7 @@ export const Menu = Vue.observable<Record<string, MenuCategory>>({
 				caption: "menu.files.system",
 				path: "/Files/System",
 				component: System
-			}
+			}*/
 		],
 		translated: false
 	},
@@ -170,7 +177,7 @@ export const Menu = Vue.observable<Record<string, MenuCategory>>({
 		icon: "mdi-wrench",
 		caption: "menu.settings.caption",
 		pages: [
-			{
+			/*{
 				icon: "mdi-tune",
 				caption: "menu.settings.general",
 				path: "/Settings/General",
@@ -181,7 +188,7 @@ export const Menu = Vue.observable<Record<string, MenuCategory>>({
 				caption: "menu.settings.machine",
 				path: "/Settings/Machine",
 				component: Machine
-			},
+			},*/
 			{
 				icon: "mdi-power-plug",
 				caption: "menu.plugins.caption",
