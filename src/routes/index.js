@@ -6,7 +6,7 @@ import VueRouter from 'vue-router'
 //import Status from './Control/Status.vue'
 //import Dashboard from './Control/Dashboard.vue'
 //import Console from './Control/Console.vue'
-//import RLP from '../plugins/RLP/RLP.vue'
+import RLP from '../plugins/RLP/RLP.vue'
 
 //import Filaments from './Files/Filaments.vue'
 import Jobs from './Files/Jobs.vue'
@@ -183,7 +183,7 @@ export function registerSettingTab(general, name, component, caption, translated
 // Control
 //Vue.use(Status)
 //Vue.use(Console)
-//Vue.use(RLP)
+Vue.use(RLP)
 
 // Files
 //Vue.use(Filaments)
