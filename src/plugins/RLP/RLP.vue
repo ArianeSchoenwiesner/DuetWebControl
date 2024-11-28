@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<v-row id="homedCard" class="justify-center stretch no-gutters">
-			<div v-if="(!axes[0].homed) || (!axes[1].homed) || (!axes[2].homed)">
+			<div v-if="(!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)">
 				<v-card id="homed" :disabled="status!='idle'" class="text-center flex-row stretch" color="warning">
 					<v-card-title>
 						Machine not homed!!!
@@ -195,9 +195,9 @@
 						<v-expansion-panel>
 							<v-expansion-panel-header>Last Job Start Location</v-expansion-panel-header>
 							<v-expansion-panel-content>
-								X: {{ $display(global["placeX"]) }}<br>
-								Y: {{ $display(global["placeY"]) }}<br>
-								Z: {{ $display(global["placeZ"]) }}
+								X: {{ $display(global.get("placeX")) }}<br>
+								Y: {{ $display(global.get("placeY")) }}<br>
+								Z: {{ $display(global.get("placeZ")) }}
 							</v-expansion-panel-content>
 						</v-expansion-panel>
 					</v-expansion-panels>
@@ -269,7 +269,7 @@
 								Jogging
 							</v-card-title>
 							<v-row class="justify-left px-10">
-								<v-btn color="green" @click="setupLoc" :disabled='global["purge_loc"]'>
+								<v-btn color="green" @click="setupLoc" :disabled='global.get("purge_loc")'>
 									Purge Location
 								</v-btn>
 								<v-btn class="mx-2" color="green" @click="goOrigin">
@@ -381,16 +381,52 @@
 <script>
 'use strict';
 
+import store from "@/store";
+import Vue from "vue";
+import ObjectModel, { Axis, Board, MachineMode, Probe, ProbeType } from "@duet3d/objectmodel";
 import {mapState, mapGetters, mapActions} from 'vuex';
 import { mapMutations } from 'vuex';
 
-export default {
+export default Vue.extend ({
 	computed: {
+		isConnected() {
+			return store.getters["isConnected"];
+		},
+		uiFrozen() {
+			return store.getters["uiFrozen"];
+		},
+		model() {
+			return store.state.machine.model;
+		},
+		move() {
+			return store.state.machine.model.move;
+		},
+		axes() {
+			return store.state.machine.model.move.axes;
+		},
+		global() {
+			return store.state.machine.model.global;
+		},
+		extruders() {
+			return this.global.get("extruder_num");
+		},
+		status() {
+			return store.state.machine.model.state.status;
+		},
+		statusthing() {
+			return store.state.machine.model.state.status;
+		},
+		air() {
+			return store.state.machine.model.fans[0].actualValue;
+		},
+		light() {
+			return store.state.machine.model.fans[4].actualValue;
+		},
 		...mapState(['selectedMachine']),
-		...mapGetters(['isConnected', 'uiFrozen']),
+		//...mapGetters(['isConnected', 'uiFrozen']),
 		...mapState('machine/cache', {
 			pluginCache: (state) => state.plugins.RLP,
-		}),
+		}),/*
 		...mapState('machine/model', {
 			systemDirectory: (state) => state.directories.system,
 			move: (state) => state.move,
@@ -401,7 +437,7 @@ export default {
 			air: (state) => state.fans[0].actualValue,
 			light: (state) => state.fans[4].actualValue,
 			kinematicsName: (state) => state.move.kinematics.name,
-		}),
+		}),*/
 		...mapState('settings', ['language']),
 	},
 	data() {
@@ -742,7 +778,7 @@ export default {
 			}
 		},*/
 		async homing(axis) {
-			if ((this.global["mode"] == 2) || (this.global["mode"] == 0)) {
+			if ((this.global.get("mode") == 2) || (this.global.get("mode") == 0)) {
 				if (axis == "all") {
 					this.codeReply = this.sendCode('M98 P"homeall.g"');
 					setTimeout(() => {
@@ -830,7 +866,7 @@ export default {
 				this.sendCode('echo "One or more axes are not homed! Please home axes before moving."');
 				return;
 			}
-			if ((this.global["mode"] == 2) || (this.global["mode"] == 5)) {
+			if ((this.global.get("mode") == 2) || (this.global.get("mode") == 5)) {
 				this.idlePurging = true;
 				/*
 				if (this.axes[2].machinePosition != 0) {
@@ -869,7 +905,7 @@ export default {
 				await this.sendCode("G1 Z{global.purgeZ} F4000");
 			}
 			await this.sendCode("M42 P4 S0");*/
-			if ((this.global["mode"] == 2) || (this.global["mode"] == 5)) {
+			if ((this.global.get("mode") == 2) || (this.global.get("mode") == 5)) {
 				await this.sendCode('M98 P"/macros/go_purge.g"');
 				await this.sendCode('M400');
 				await this.purge();
@@ -973,7 +1009,7 @@ export default {
 				await this.sendCode("G1 Z{global.purgeZ} F4000");
 			}
 			await this.sendCode("M42 P4 S0");*/
-			if ((this.global["mode"] == 2) || (this.global["mode"] == 5)) {
+			if ((this.global.get("mode") == 2) || (this.global.get("mode") == 5)) {
 				await this.sendCode('M98 P"/macros/go_purge.g"');
 				await this.sendCode('M400');
 				//await this.sendCode('M42 P3 S1');
@@ -1061,15 +1097,15 @@ export default {
 			else if (this.needle == 0.5) {
 				aS = -1*(4.4 * (tempRat/(tempRat+1)));
 				bS = -1*(4.4 / (tempRat+1));
-				console.log(this.makeExtrusionString(80));
-				await this.sendCode("G1 "+this.makeExtrusionString(80));
+				console.log(this.makeExtrusionString(160));
+				await this.sendCode("G1 "+this.makeExtrusionString(160));
 				await this.sendCode("G1 E"+String(aS)+":"+String(bS));
 			}
 			await this.sendCode("M400");
 			await this.sendCode('M98 P"/macros/cartridge_air_off.g"');
 		},
 		async cleanPurging() {
-			if ((this.global["mode"] == 2) || (this.global["mode"] == 5)) {
+			if ((this.global.get("mode") == 2) || (this.global.get("mode") == 5)) {
 				await this.sendCode('M98 P"/macros/cleanpurge.g"');
 			}
 			else {
@@ -1100,7 +1136,7 @@ export default {
 		},
 		async goTo() {
 			if (this.xInp || this.yInp) {
-				if (this.global["mode"] == 2) {
+				if (this.global.get("mode") == 2) {
 					if ((!this.axes[0].homed) || (!this.axes[1].homed) || (!this.axes[2].homed)) {
 						this.sendCode('echo "One or more axes are not homed! Please home axes before moving."');
 						var x = document.getElementById("xx");
@@ -1139,11 +1175,11 @@ export default {
 							await this.sendCode("G1 X"+this.xInp+" Y"+this.yInp+"F6000");
 						}
 					}
-					else if (this.xInp != this.axes[0].machinePosition && this.xInp != undefined) {
+					else if ((this.xInp != this.axes[0].machinePosition) && (this.xInp != undefined)) {
 						//await this.sendCode("M42 P4 S0");
 						await this.sendCode("G1 X"+this.xInp+"F6000");
 					}
-					else if (this.yInp != this.axes[1].machinePosition && this.yInp != undefined) {
+					else if ((this.yInp != this.axes[1].machinePosition) && (this.yInp != undefined)) {
 						//await this.sendCode("M42 P4 S0");
 						await this.sendCode("G1 Y"+this.yInp+"F6000");
 					}
@@ -1172,7 +1208,7 @@ export default {
 				this.zInp = undefined;
 				return;
 			}
-			if (this.global["mode"] == 2) {
+			if (this.global.get("mode") == 2) {
 				if (this.zInp > this.axes[2].max || this.zInp < this.axes[2].min) {
 					this.sendCode('echo "Travel beyond machine limits!!!')
 					z = document.getElementById("zz");
@@ -1193,10 +1229,10 @@ export default {
 			}
 		},
 		async setupLoc() {
-			if (this.global["mode"] == 2) {
+			if (this.global.get("mode") == 2) {
 				await this.sendCode('M98 p"/macros/go_purge.g"');
 			}
-			else if (this.global["purge_loc"] == true) {
+			else if (this.global.get("purge_loc") == true) {
 				this.sendCode('echo "You are already in purge location."');
 			}
 			else {
@@ -1221,10 +1257,10 @@ export default {
 			await this.sendCode("M42 P4 S1");*/
 		},
 		async goOrigin() {
-			if (this.global["mode"] == 5) {
+			if (this.global.get("mode") == 5) {
 				await this.sendCode('M98 P"/macros/go_origin.g"');
 			}
-			else if (this.global["purge_loc"] != true) {
+			else if (this.global.get("purge_loc") != true) {
 				this.sendCode('echo "Not currently in purge location."');
 			}
 			else {
@@ -1236,7 +1272,7 @@ export default {
 				this.sendCode('echo "Axis not homed! Please home axis before moving."');
 				return;
 			}
-			if (this.global["mode"] == 2) {
+			if (this.global.get("mode") == 2) {
 				if (this.axes[axis].machinePosition+amount>this.axes[axis].max || this.axes[axis].machinePosition+amount<this.axes[axis].min) {
 					this.sendCode('echo "Too far!!!"');
 					return;
@@ -1303,10 +1339,10 @@ export default {
 					if (String(document.activeElement) == "[object HTMLInputElement]") {
 						break;
 					}
-					else if (this.status != "idle") {
+					else if (this.statusthing != "idle") {
 						break;
 					}
-					else if (this.global["mode"] != 2) {
+					else if (this.global.get("mode") != 2) {
 						break;
 					}
 					else {
@@ -1320,10 +1356,10 @@ export default {
 					if (String(document.activeElement) == "[object HTMLInputElement]") {
 						break;
 					}
-					else if (this.status != "idle") {
+					else if (this.statusthing != "idle") {
 						break;
 					}
-					else if (this.global["mode"] != 2) {
+					else if (this.global.get("mode") != 2) {
 						break;
 					}
 					else {
@@ -1337,10 +1373,10 @@ export default {
 					if (String(document.activeElement) == "[object HTMLInputElement]") {
 						break;
 					}
-					else if (this.status != "idle") {
+					else if (this.statusthing != "idle") {
 						break;
 					}
-					else if (this.global["mode"] != 2) {
+					else if (this.global.get("mode") != 2) {
 						break;
 					}
 					else{
@@ -1354,10 +1390,10 @@ export default {
 					if (String(document.activeElement) == "[object HTMLInputElement]") {
 						break;
 					}
-					else if (this.status != "idle") {
+					else if (this.statusthing != "idle") {
 						break;
 					}
-					else if (this.global["mode"] != 2) {
+					else if (this.global.get("mode") != 2) {
 						break;
 					}
 					else {
@@ -1371,10 +1407,10 @@ export default {
 					if (String(document.activeElement) == "[object HTMLInputElement]") {
 						break;
 					}
-					else if (this.status != "idle") {
+					else if (this.statusthing != "idle") {
 						break;
 					}
-					else if (this.global["mode"] != 2) {
+					else if (this.global.get("mode") != 2) {
 						break;
 					}
 					else {
@@ -1388,10 +1424,10 @@ export default {
 					if (String(document.activeElement) == "[object HTMLInputElement]") {
 						break;
 					}
-					else if (this.status != "idle") {
+					else if (this.statusthing != "idle") {
 						break;
 					}
-					else if (this.global["mode"] != 2) {
+					else if (this.global.get("mode") != 2) {
 						break;
 					}
 					else {
@@ -1406,6 +1442,6 @@ export default {
 		this.ready = true;
 	},
 	watch: {	},
-};
+});
 
 </script>

@@ -4,7 +4,7 @@ import VueRouter, { RouteConfig } from "vue-router";
 
 import store from "@/store";
 
-import RLP from "../plugins/RLP/RLP.vue";
+//import RLP from "../Plugins/RLP/RLP.vue";
 //import Status from "./Control/Status.vue";
 //import Dashboard from "./Control/Dashboard.vue";
 //import Console from "./Control/Console.vue";
@@ -92,13 +92,13 @@ export const Menu = Vue.observable<Record<string, MenuCategory>>({
 	Control: {
 		icon: "mdi-tune",
 		caption: "menu.control.caption",
-		pages: [
+		pages: [/*
 			{
 				icon: "mdi-view-dashboard",
 				caption: "menu.control.dashboard",
-				path: "/RLP",
+				path: "/",
 				component: RLP
-			},
+			},*/
 			/*{
 				icon: "mdi-list-status",
 				caption: "menu.control.status",
